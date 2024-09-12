@@ -1,3 +1,5 @@
+@import "@flaticon/flaticon-uicons/css/all/all";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -64,10 +66,14 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-hidden;
   }
 
-  :webkit-scrollbar {
+  i {
+    @apply mt-1;
+  }
+
+  ::-webkit-scrollbar {
     width: 0px;
   }
 }
