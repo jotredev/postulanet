@@ -22,7 +22,7 @@ export const Sidebar = () => {
             </li>
             <li>
               <Link
-                href="/"
+                href="/app"
                 className={cn(
                   "flex items-center gap-4 text-sm py-2 px-4 hover:bg-background dark:hover:bg-secondary/50 transition-colors duration-300 rounded-lg mb-1",
                   pathname === "/" && "bg-background dark:bg-secondary/50"

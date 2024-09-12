@@ -1,5 +1,6 @@
 import { ButtonToggleTheme } from "@/components/ui/button-toggle-theme";
 import { UserNav } from "@/components/ui/user-nav";
+import { UserButton } from "@clerk/nextjs";
 
 export const Header = () => {
   return (
@@ -21,7 +22,7 @@ export const Header = () => {
             </p>
           </li>
           <li>
-            <UserNav />
+            <UserButton />
           </li>
         </ul>
       </section>
