@@ -14,6 +14,15 @@ datasource db {
   relationMode = "prisma"
 }
 
+model User{
+  id String @id @default(uuid())
+  userId String
+  role String @default("default")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Vacancie {
   id String @id @default(uuid())
   userId String
@@ -21,9 +30,8 @@ model Vacancie {
   shortDescription String @db.Text
   description String @db.Text
   location String
-  salary String
-  status String
-  targets String[]
+  salary Float
+  isPublished Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
