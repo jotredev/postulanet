@@ -54,7 +54,14 @@ export async function POST(req: Request) {
 
   if (eventType === "user.created" || eventType === "user.updated") {
     try {
-      const { id } = evt.data;
+      const {
+        id,
+        first_name,
+        last_name,
+        username,
+        email_addresses,
+        image_url,
+      } = evt.data;
       const user = await db.user.findFirst({
         where: {
           userId: id,
@@ -65,13 +72,18 @@ export async function POST(req: Request) {
         await db.user.create({
           data: {
             userId: id,
+            firstName: first_name ?? "",
+            lastName: last_name ?? "",
+            username: username ?? "",
+            email: email_addresses[0].email_address,
+            photo: image_url ?? "",
           },
         });
       }
 
       // TODO: SI EL USUARIO EXISTE DEBEMOS ACTUALIZAR SU INFORMACIÓN
 
-      return new Response("Usuario creado con su rol", { status: 200 });
+      return new Response("Usuario creado", { status: 200 });
     } catch (error) {
       console.log("ERROR_WEBHOOK_CREATE_USER", error);
       return new Response("Error del servidor", { status: 500 });
@@ -81,11 +93,12 @@ export async function POST(req: Request) {
   if (eventType === "user.deleted") {
     try {
       const { id } = evt.data;
-      // await db.user.delete({
-      //   where: {
-      //     userId: id,
-      //   },
-      // });
+
+      await db.user.delete({
+        where: {
+          userId: id,
+        },
+      });
 
       return new Response("Usuario eliminado", { status: 200 });
     } catch (error) {

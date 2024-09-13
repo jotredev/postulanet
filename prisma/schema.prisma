@@ -16,8 +16,13 @@ datasource db {
 
 model User{
   id String @id @default(uuid())
-  userId String
+  userId String @unique
   role String @default("default")
+  firstName String
+  lastName String
+  email String @unique
+  photo String
+  username String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
