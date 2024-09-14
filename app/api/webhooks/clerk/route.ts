@@ -62,24 +62,43 @@ export async function POST(req: Request) {
         email_addresses,
         image_url,
       } = evt.data;
-      const user = await db.user.findFirst({
-        where: {
+
+      await db.user.upsert({
+        where: { userId: id },
+        update: {
+          firstName: first_name ?? "",
+          lastName: last_name ?? "",
+          email: email_addresses[0].email_address,
+          photo: image_url ?? "",
+        },
+        create: {
           userId: id,
+          firstName: first_name ?? "",
+          lastName: last_name ?? "",
+          username: username ?? "",
+          email: email_addresses[0].email_address,
+          photo: image_url ?? "",
         },
       });
 
-      if (!user) {
-        await db.user.create({
-          data: {
-            userId: id,
-            firstName: first_name ?? "",
-            lastName: last_name ?? "",
-            username: username ?? "",
-            email: email_addresses[0].email_address,
-            photo: image_url ?? "",
-          },
-        });
-      }
+      // const user = await db.user.findFirst({
+      //   where: {
+      //     userId: id,
+      //   },
+      // });
+
+      // if (!user) {
+      //   await db.user.create({
+      //     data: {
+      //       userId: id,
+      //       firstName: first_name ?? "",
+      //       lastName: last_name ?? "",
+      //       username: username ?? "",
+      //       email: email_addresses[0].email_address,
+      //       photo: image_url ?? "",
+      //     },
+      //   });
+      // }
 
       // TODO: SI EL USUARIO EXISTE DEBEMOS ACTUALIZAR SU INFORMACIÓN
 
