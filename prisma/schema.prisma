@@ -23,6 +23,15 @@ model User{
   email String @unique
   photo String
   username String @unique
+  cel Int?
+  cvFile String?
+  credits Int @default(0)
+  countVacancies Int @default(0)
+  isOrganization Boolean @default(false)
+  country String?
+  city String?
+  municipality String?
+  bio String? @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
