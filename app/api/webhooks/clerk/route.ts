@@ -1,7 +1,8 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { WebhookEvent } from "@clerk/nextjs/server";
+import { auth, WebhookEvent } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -122,6 +123,41 @@ export async function POST(req: Request) {
       return new Response("Usuario eliminado", { status: 200 });
     } catch (error) {
       console.log("ERROR_WEBHOOK_DELETE_USER", error);
+      return new Response("Error del servidor", { status: 500 });
+    }
+  }
+
+  if (
+    eventType === "organization.created" ||
+    eventType === "organization.updated"
+  ) {
+    try {
+      const { userId } = auth();
+      const { id, name, image_url, slug } = evt.data;
+
+      if (!userId) {
+        return new NextResponse("Sin autorización", { status: 403 });
+      }
+
+      await db.organization.upsert({
+        where: { orgId: id },
+        update: {
+          name: name ?? "",
+          image: image_url ?? "",
+          slug: slug ?? "",
+        },
+        create: {
+          orgId: id,
+          userId,
+          name: name ?? "",
+          image: image_url ?? "",
+          slug: slug ?? "",
+        },
+      });
+
+      return new Response("Organización creada", { status: 200 });
+    } catch (error) {
+      console.log("ERROR_WEBHOOK_CREATE_ORGANIZATION", error);
       return new Response("Error del servidor", { status: 500 });
     }
   }

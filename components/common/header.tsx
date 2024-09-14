@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UserButton } from "@clerk/nextjs";
+import { OrganizationSwitcher, UserButton, useUser } from "@clerk/nextjs";
+import { toast } from "sonner";
 
-import axios from "axios";
+import { getCredits } from "@/actions/user";
 
 import { ButtonToggleTheme } from "@/components/ui/button-toggle-theme";
 import { Loader } from "lucide-react";
@@ -11,34 +12,33 @@ import { Loader } from "lucide-react";
 export const Header = () => {
   const [credits, setCredits] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUser();
 
   useEffect(() => {
     (async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await axios.get("/api/auth");
-        setCredits(data.user.credits);
-      } catch (error) {
-        console.log("[ERROR_GET_AUTH]", error);
-      } finally {
-        setIsLoading(false);
+      setIsLoading(true);
+      const { response, credits } = await getCredits();
+      if (response === "success") {
+        setCredits(credits);
+      } else {
+        toast.error("Error al obtener los créditos");
       }
+      setIsLoading(false);
     })();
   }, []);
 
   return (
     <header className="h-[7dvh] xl:h-[10dvh] flex items-center justify-between px-5">
       <section>
-        <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+        <h2 className="text-2xl font-bold tracking-tight">
+          Bienvenido, {user?.firstName} 👋
+        </h2>
         <p className="text-muted-foreground">
           Here&apos;s a list of your tasks for this month!
         </p>
       </section>
       <section>
         <ul className="inline-flex items-center gap-4">
-          <li>
-            <ButtonToggleTheme />
-          </li>
           <li>
             <p className="inline-flex items-center gap-2 font-medium">
               Credits:{" "}
@@ -50,6 +50,12 @@ export const Header = () => {
                 )}
               </span>
             </p>
+          </li>
+          <li>
+            <ButtonToggleTheme />
+          </li>
+          <li>
+            <OrganizationSwitcher />
           </li>
           <li>
             <UserButton />
